@@ -1,0 +1,149 @@
+project_name: smol-helper
+
+builds:
+  - binary: smol-helper
+
+    main: ./cmd/smol-helper/main.go
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+
+    goos:
+      - windows
+      - darwin
+      - linux
+      - freebsd
+      - openbsd
+      - solaris
+    goarch:
+      - amd64
+      - 386
+      - arm
+      - arm64
+    goarm:
+      - 7
+      - 6
+      - 5
+
+    ignore:
+      - goos: darwin
+        goarch: 386
+      - goos: openbsd
+        goarch: arm
+
+archives:
+  - id: smol-helper
+    rlcp: true
+    name_template: '{{ .ProjectName }}_v{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}{{ if .Mips }}_{{ .Mips }}{{ end }}'
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - LICENSE
+
+docker_manifests:
+  - name_template: 'rafadotel/smol-helper:latest'
+    image_templates:
+      - 'rafadotel/smol-helper:{{ .Tag }}-amd64'
+      - 'rafadotel/smol-helper:{{ .Tag }}-arm64'
+      - 'rafadotel/smol-helper:{{ .Tag }}-armv7'
+  - name_template: 'rafadotel/smol-helper:{{ .Tag }}'
+    image_templates:
+      - 'rafadotel/smol-helper:{{ .Tag }}-amd64'
+      - 'rafadotel/smol-helper:{{ .Tag }}-arm64'
+      - 'rafadotel/smol-helper:{{ .Tag }}-armv7'
+  - name_template: 'rafadotel/smol-helper:v{{ .Major }}.{{ .Minor }}'
+    image_templates:
+      - 'rafadotel/smol-helper:v{{ .Major }}.{{ .Minor }}-amd64'
+      - 'rafadotel/smol-helper:v{{ .Major }}.{{ .Minor }}-arm64'
+      - 'rafadotel/smol-helper:v{{ .Major }}.{{ .Minor }}-armv7'
+
+dockers:
+  - use: buildx
+    goos: linux
+    goarch: amd64
+    dockerfile: buildx.Dockerfile
+    image_templates:
+      - 'rafadotel/smol-helper:latest-amd64'
+      - 'rafadotel/smol-helper:{{ .Tag }}-amd64'
+      - 'rafadotel/smol-helper:v{{ .Major }}.{{ .Minor }}-amd64'
+    build_flag_templates:
+      - '--pull'
+      # https://github.com/opencontainers/image-spec/blob/main/annotations.md#pre-defined-annotation-keys
+      - '--label=org.opencontainers.image.title={{.ProjectName}}'
+      - '--label=org.opencontainers.image.description=Smol LLM helper for the cli'
+      - '--label=org.opencontainers.image.source={{.GitURL}}'
+      - '--label=org.opencontainers.image.url={{.GitURL}}'
+      - '--label=org.opencontainers.image.documentation=https://github.com/rafa-dot-el/smol-helper'
+      - '--label=org.opencontainers.image.created={{.Date}}'
+      - '--label=org.opencontainers.image.revision={{.FullCommit}}'
+      - '--label=org.opencontainers.image.version={{.Version}}'
+      - '--platform=linux/amd64'
+
+  - use: buildx
+    goos: linux
+    goarch: arm64
+    dockerfile: buildx.Dockerfile
+    image_templates:
+      - 'rafadotel/smol-helper:latest-arm64'
+      - 'rafadotel/smol-helper:{{ .Tag }}-arm64'
+      - 'rafadotel/smol-helper:v{{ .Major }}.{{ .Minor }}-arm64'
+    build_flag_templates:
+      - '--pull'
+      # https://github.com/opencontainers/image-spec/blob/main/annotations.md#pre-defined-annotation-keys
+      - '--label=org.opencontainers.image.title={{.ProjectName}}'
+      - '--label=org.opencontainers.image.description=Smol LLM helper for the cli'
+      - '--label=org.opencontainers.image.source={{.GitURL}}'
+      - '--label=org.opencontainers.image.url={{.GitURL}}'
+      - '--label=org.opencontainers.image.documentation=https://github.com/rafa-dot-el/smol-helper'
+      - '--label=org.opencontainers.image.created={{.Date}}'
+      - '--label=org.opencontainers.image.revision={{.FullCommit}}'
+      - '--label=org.opencontainers.image.version={{.Version}}'
+      - '--platform=linux/arm64'
+
+  - use: buildx
+    goos: linux
+    goarch: arm
+    goarm: '7'
+    dockerfile: buildx.Dockerfile
+    image_templates:
+      - 'rafadotel/smol-helper:latest-armv7'
+      - 'rafadotel/smol-helper:{{ .Tag }}-armv7'
+      - 'rafadotel/smol-helper:v{{ .Major }}.{{ .Minor }}-armv7'
+    build_flag_templates:
+      - '--pull'
+      # https://github.com/opencontainers/image-spec/blob/main/annotations.md#pre-defined-annotation-keys
+      - '--label=org.opencontainers.image.title={{.ProjectName}}'
+      - '--label=org.opencontainers.image.description=Smol LLM helper for the cli'
+      - '--label=org.opencontainers.image.source={{.GitURL}}'
+      - '--label=org.opencontainers.image.url={{.GitURL}}'
+      - '--label=org.opencontainers.image.documentation=https://github.com/rafa-dot-el/smol-helper'
+      - '--label=org.opencontainers.image.created={{.Date}}'
+      - '--label=org.opencontainers.image.revision={{.FullCommit}}'
+      - '--label=org.opencontainers.image.version={{.Version}}'
+      - '--platform=linux/arm/v7'
+
+changelog:
+  skip: false
+  use: github
+  sort: asc
+  abbrev: -1
+  groups:
+    - title: Features
+      regexp: '^feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: 'Bug fixes'
+      regexp: '^fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: 'Chores'
+      regexp: '^chore: .+$'
+      order: 2
+  filters:
+    exclude:
+      - '^docs:'
+      - typo
+      - (?i)foo

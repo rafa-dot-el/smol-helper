@@ -1,0 +1,165 @@
+#+Title: Smol Helper
+
+[[file:./helper.jpg]]
+
+Smol helper is a small client for a small LLM model to assist on very basic
+tasks, the main focus in on performance and availability.
+
+It has 3 available modes:
+
+- Conversational: Default mode no extra parameters required, shows a prompt for
+  a conversation
+- =-oneshot=: reads the whole =stdin= input before processing on the model, useful
+  for completion tasks or scripts
+- =-headless=: a conversational mode without a prompt, useful for scripts which
+  require continuous inputs or bots.
+
+For the conversational modes *a blank line* tells the model that it should act on
+the input up to that point. This is not suitable to send code which has a lot of
+blank lines in between the statements, for this =-oneshot= is recommended.
+
+* Installation
+** Go tooling from Github
+
+#+begin_src bash
+go install -v github.com/rafa-dot-el/smol-helper@latest
+#+end_src
+
+
+** Binaries
+
+* Running in interactive mode
+This is the default mode, it will start a conversation which will have a context.
+
+#+begin_src bash
+smol-helper
+#+end_src
+
+The conversation is split between =User= and =Helper=:
+
+#+begin_example
+User: What is Debian?
+
+Helper: Debian is a free and open-source operating system. It is developed and
+maintained by a community of volunteers who work together to provide a complete
+and stable operating system. Debian is known for its simplicity and ease of use,
+and is used by many individuals, organizations, and governments around the
+world.
+
+User: What is Nixos?
+
+Helper: NixOS is a Linux distribution based on the Nix package manager. It is
+designed to be simple, flexible, and secure, and is designed to be used in
+production environments. NixOS is known for its focus on security and privacy,
+and provides a secure and isolated environment for its users.
+
+User: What is the Dark Brotherhood?
+
+Helper: Dark Brotherhood is a fictional organization in the video game The Elder
+Scrolls V: Skyrim. It is a group of assassins who serve the Daedric Prince Molag
+Bal. The Dark Brotherhood is known for their secrecy, their use of dark magic,
+and their willingness to kill anyone who threatens the stability of the game's
+world.
+#+end_example
+
+* Running in headless mode
+Using the flag =-headless= no other output than the server output will be printed
+out. This is to be used on shell scripts and as a backend for applications.
+
+#+begin_src bash
+smol-helper -headless
+#+end_src
+
+Now your application can read from the process =stdout= and write to the process
+=stdin= without worrying about formats or parsing data.
+
+* Running in one shot mode
+One shot mode is usefull for integration which don't require keeping the
+context, and at the same time have bigger inputs, as in pieces of code, error
+logs and general tasks which require line breaks and just one bigger context.
+
+If using an interactive shell, type the input without worrying about line breaks
+and finish it with =Ctrl + D=. If not running interactively, is possible to pipe
+or input a file to the model as the following:
+
+#+begin_src bash
+cat example-docstring | smol-helper -oneshot
+#+end_src
+
+Or
+
+#+begin_src bash
+smol-helper -oneshot < example-docstring
+#+end_src
+
+It will give the following output:
+
+#+begin_example
+```py
+def sum(a: int, b: int) -> int:
+    """
+    Sum two numbers.
+
+    Parameters
+    ----------
+    a : int
+        First number.
+    b : int
+        Second number.
+
+    Returns
+    -------
+    int
+        The sum of the two numbers.
+    """
+    return a + b
+```
+#+end_example
+
+The contents of the task file are the following:
+
+#+begin_example
+Given the code below, write a python docstring with the Google standard listing all parameters.
+
+
+def sum(a: int, b:int) -> int:
+  return a+b
+#+end_example
+
+* Build
+It uses standard =Golang= tooling, to build just run
+#+begin_src bash
+go build -o smol-helper cmd/smol-helper/main.go
+#+end_src
+
+** Release
+Releases are executed using =gorelease=:
+#+begin_src bash
+goreleaser release --snapshot --clean
+#+end_src
+
+* Developing
+This project uses =nix= and =direnv=, just
+
+#+begin_src bash
+direnv allow
+#+end_src
+
+and
+
+#+begin_src bash
+nix develop
+#+end_src
+
+Are enough to give you a development environment.
+
+* Disclaimer
+
+This or previous program is for Educational purpose ONLY. Do not use it without
+permission. The usual disclaimer applies, especially the fact that me (Rafa-dot-el)
+is not liable for any damages caused by direct or indirect use of the
+information or functionality provided by these programs. The author or any
+Internet provider bears NO responsibility for content or misuse of these
+programs or any derivatives thereof. By using these programs you accept the fact
+that any damage (dataloss, system crash, system compromise, etc.) caused by the
+use of these programs is not Rafa-dot-el's responsibility.
