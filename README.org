@@ -153,7 +153,9 @@ def sum(a: int, b:int) -> int:
 #+end_example
 
 * Extensibility
-Since =smol-helper= uses the unix philosophy, it is easily composeable.
+Since =smol-helper= uses the unix philosophy, it is easily composeable. Below some
+examples and use cases to show how embed it into your scripts.
+
 ** Debug kernel problems
 Error messages can be piped into =smol-helper= and a simple diagnostic can be
 taken. Below an example of the composability of =smol-helper= to debug a hardware
