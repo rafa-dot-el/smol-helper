@@ -152,6 +152,44 @@ def sum(a: int, b:int) -> int:
   return a+b
 #+end_example
 
+* Extensibility
+Since =smol-helper= uses the unix philosophy, it is easily composeable.
+** Debug kernel problems
+Error messages can be piped into =smol-helper= and a simple diagnostic can be
+taken. Below an example of the composability of =smol-helper= to debug a hardware
+problem.
+
+#+begin_src bash
+function what-is-wrong() {
+    local LAST_ERRORS=$(dmesg | grep -i error | cut -d ']' -f 2 | sort | uniq | tail -n 3)
+    echo "I found this error on dmesg of my linux, can you help me fix it? ${LAST_ERRORS}"  | smol-helper -oneshot
+}
+#+end_src
+
+After defining the above function, at anytime you can just run =what-is-wrong=,
+and it will take the last 3 lines containing =error= (case insensitive) from your
+kernel logs and ask the model what could be the cause of it.
+
+#+begin_example
+These errors usually indicate that the USB device is not properly configured or
+is not supported by the host computer. To resolve this issue, you should check
+the following steps:
+
+1. Check the device's specifications and make sure that it is compatible with
+   your host computer.
+2. Ensure that the USB cable is properly connected and that the device is not
+   being powered by another source.
+3. Try plugging the device into a different USB port on the host computer.
+#+end_example
+
+As for example my last 3 lines on =dmesg= are
+
+#+begin_example
+[    6.081375] usb 1-8: device descriptor read/64, error -71
+[    7.095335] usb 1-8: device not accepting address 6, error -71
+[    7.735333] usb 1-8: device not accepting address 7, error -71
+#+end_example
+
 * Build
 It uses standard =Golang= tooling, to build just run
 #+begin_src bash
