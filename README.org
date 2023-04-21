@@ -178,7 +178,7 @@ As for example my last 3 lines on =dmesg= are
 [    7.735333] usb 1-8: device not accepting address 7, error -71
 #+end_example
 
-Resuluts in
+Running =what-is-wrong= results in
 
 #+begin_example
 These errors usually indicate that the USB device is not properly configured or
