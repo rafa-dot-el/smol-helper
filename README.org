@@ -19,14 +19,40 @@ the input up to that point. This is not suitable to send code which has a lot of
 blank lines in between the statements, for this =-oneshot= is recommended.
 
 * Installation
-** Go tooling from Github
+** Binaries
+[[https://github.com/rafa-dot-el/smol-helper/releases][On the releases page]] you can find the last compiled releases.
 
+** Docker
+Images are tagged based on the git tag but also the =latest= tag is available
+
+#+begin_src bash
+docker run -it rafadotel/smol-helper
+#+end_src
+
+will download and execute the latest model
+
+#+begin_example
+# docker run -it rafadotel/smol-helper
+✔ docker.io/rafadotel/smol-helper:latest
+Trying to pull docker.io/rafadotel/smol-helper:latest...
+Getting image source signatures
+Copying blob 711049d4ff0d done
+Copying blob f56be85fc22e skipped: already exists
+Copying blob ac91355af1d2 done
+Copying config 8143429fea done
+Writing manifest to image destination
+Storing signatures
+User:
+#+end_example
+
+** Nixos
+This repository uses flakes so can be installed easily within a Nixos + Flakes setup.
+
+** Using Go tooling
+This project uses standard Golang tooling, so it can be installed with:
 #+begin_src bash
 go install -v github.com/rafa-dot-el/smol-helper@latest
 #+end_src
-
-
-** Binaries
 
 * Running in interactive mode
 This is the default mode, it will start a conversation which will have a context.
