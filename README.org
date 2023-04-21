@@ -194,6 +194,14 @@ the following steps:
 3. Try plugging the device into a different USB port on the host computer.
 #+end_example
 
+** Using with python
+It can be embedded within simple python scripts as for example:
+
+#+begin_src python
+import subprocess
+p = subprocess.run(['smol-helper','-oneshot'], input='What is the Unix Philosophy?', capture_output=True, text=True)
+print(p)
+#+end_src
 * Build
 It uses standard =Golang= tooling, to build just run
 #+begin_src bash
