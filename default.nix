@@ -7,7 +7,7 @@ in import (fetchTree nixpkgs.locked) {
 
 pkgs.buildGoApplication {
   pname = "smol-helper";
-  version = "0.1";
+  version = "1.0.1";
   pwd = ./.;
   src = ./.;
   modules = ./gomod2nix.toml;
