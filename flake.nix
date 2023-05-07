@@ -13,8 +13,12 @@
           overlays = [ gomod2nix.overlays.default ];
         };
 
-      in {
+      in rec {
         packages.default = pkgs.callPackage ./. { };
         devShells.default = import ./shell.nix { inherit pkgs; };
+        defaultPackage = pkgs.callPackage ./. { };
+        packages.smol-helper = packages.default;
+        apps.smol-helper = flake-utils.lib.mkApp { drv = packages.default; };
+        defaultApp = apps.smol-helper;
       }));
 }
